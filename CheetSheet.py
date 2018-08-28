@@ -116,4 +116,16 @@ that shows how to add the ActionItem to a menu.
 
 selected_nodes = MaxPlus.SelectionManager.Nodes
 
+#delete nodes
+
+for each in selected_nodes:
+	each.Delete()
+
+
 #move nodes
+
+
+for each in selected_nodes:
+	# each.Move(MaxPlus.Point3(25,222,22))
+
+	each.Position(MaxPlus.Point3(0,0,0))

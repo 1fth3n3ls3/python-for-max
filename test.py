@@ -1,9 +1,15 @@
 import MaxPlus
 
-# MaxPlus.Core.GetRootNode()
-x = MaxPlus.SelectionManager.Nodes
+#Get Selected nodes
 
-for each in x:
-	# each.position = MaxPlus.Point3(243,222,222)
-	test = each.SetName("ddd")
-	print test
+selected_nodes = MaxPlus.SelectionManager.Nodes
+
+#move nodes
+
+
+#delete nodes
+
+for each in selected_nodes:
+	# each.Move(MaxPlus.Point3(25,222,22))
+
+	each.Position(MaxPlus.Point3(0,0,0))
