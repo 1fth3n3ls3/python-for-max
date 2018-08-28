@@ -60,7 +60,9 @@ rt.toolMode.coordsys(pymxs.runtime.Name("world"))
 
 #get coordsys value
 
-rt.getRefCoordSys()
+x = rt.getRefCoordSys()
+
+print x
 
 
 #execute maxscript code
@@ -107,3 +109,11 @@ category which you can then bind a shortcut to in the customize UI dialog. There
 that shows how to add the ActionItem to a menu.
 
 """
+
+#MaxPlus
+
+#Get Selected nodes
+
+selected_nodes = MaxPlus.SelectionManager.Nodes
+
+#move nodes
