@@ -7,9 +7,10 @@ selected_nodes = MaxPlus.SelectionManager.Nodes
 #move nodes
 
 
-#delete nodes
+#add modifier
 
 for each in selected_nodes:
-	# each.Move(MaxPlus.Point3(25,222,22))
 
-	each.Position(MaxPlus.Point3(0,0,0))
+
+	mod = MaxPlus.Factory.CreateObjectModifier(MaxPlus.Class_ID(0x9c92c88, 0x13d466dc))
+	MaxPlus.ModifierPanel.AddToSelection(mod)
