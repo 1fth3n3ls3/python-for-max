@@ -1,6 +1,6 @@
 from pymxs import runtime as rt
 
-import MaxPlus
+import MaxPlus, sys
 
 #clear listener
 
@@ -127,13 +127,53 @@ for each in selected_nodes:
 
 for each in selected_nodes:
 	# each.Move(MaxPlus.Point3(25,222,22))
-
 	each.Position(MaxPlus.Point3(0,0,0))
 
 #add modifier
 
 for each in selected_nodes:
-
-
 	mod = MaxPlus.Factory.CreateObjectModifier(MaxPlus.Class_ID(0x9c92c88, 0x13d466dc))
 	MaxPlus.ModifierPanel.AddToSelection(mod)
+
+
+# Ejemplo de seleccion de tabnodes propios
+
+selected_nodes = (MaxPlus.SelectionManager.GetNodes())
+
+
+
+myList = MaxPlus.INodeTab()
+
+for i in range( 0, len(selected_nodes)):
+	myList.Append(selected_nodes[1])
+
+	# print str(selected_nodes[i].GetName())
+MaxPlus.SelectionManager.ClearNodeSelection()
+MaxPlus.SelectionManager.SelectNodes(myList)
+
+
+# Example accesing param blocks in a modifier
+
+for each in selected_nodes:
+	mod = MaxPlus.Factory.CreateObjectModifier(MaxPlus.Class_ID(0x9c92c88, 0x13d466dc))
+	MaxPlus.ModifierPanel.AddToSelection(mod)
+
+	i = 0
+	for p in mod.ParameterBlock:
+
+		type_name = MaxPlus.FPTypeGetName(p.Type)
+		try:
+			print '  parameter', i, p.Name, p.Type, type_name, p.Value
+			i += 1
+		except:
+			etype, evalue = sys.exc_info()[:2]
+			print 'error '. etype, evalue
+
+# Get access to a modifier
+
+selected_nodes = (MaxPlus.SelectionManager.GetNodes())
+
+for each in selected_nodes:
+	n = each.GetNumModifiers()
+	mod = each.GetModifier(n - 1) #accedo al último de la lista
+	print str(mod)
