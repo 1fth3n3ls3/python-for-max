@@ -158,7 +158,7 @@ for each in selected_nodes:
 	mod = MaxPlus.Factory.CreateObjectModifier(MaxPlus.Class_ID(0x9c92c88, 0x13d466dc))
 	MaxPlus.ModifierPanel.AddToSelection(mod)
 
-<<<<<<< HEAD
+
 	i = 0
 	for p in mod.ParameterBlock:
 
@@ -178,7 +178,7 @@ for each in selected_nodes:
 	n = each.GetNumModifiers()
 	mod = each.GetModifier(n - 1) #accedo al último de la lista
 	print str(mod)
-=======
+
 #How to pass a custom selection to max
 
 selected_nodes = MaxPlus.SelectionManager.GetNodes()
@@ -195,4 +195,4 @@ for each in range(0, n):
 
 MaxPlus.SelectionManager.ClearNodeSelection()
 MaxPlus.SelectionManager.SelectNodes(newSelection)
->>>>>>> 499872690918df8b119a983d6d22a935096cf796
+
