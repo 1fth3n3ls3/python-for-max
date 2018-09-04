@@ -138,7 +138,7 @@ for each in selected_nodes:
 
 # Ejemplo de seleccion de tabnodes propios
 
-selected_nodes = (MaxPlus.SelectionManager.GetNodes())
+selected_nodes = (MaxPlus.SelectionManager.GetNodes()) # creo el tabnode
 
 
 
@@ -194,3 +194,17 @@ for each in range(0, n):
 MaxPlus.SelectionManager.ClearNodeSelection()
 MaxPlus.SelectionManager.SelectNodes(newSelection)
 
+# Create maxscript variables
+  MaxPlus.Core.EvalMAXScript("o_layer = undefined")
+  MaxPlus.Core.EvalMAXScript("l_oNodes = #()")
+  l_oNodes = []
+
+  for i in range(len(rt.LayerManager)):
+    o_layer = rt.LayerManager.getLayer(i)
+    if o_layer.name.lower().find(sLayerName) > -1:
+      rt.o_layer = rt.LayerManager.getLayer(i)
+      # Get maxscript nodes 
+      MaxPlus.Core.EvalMAXScript("o_layer.nodes &l_oNodes")
+      # Generate python list from nodes
+      for n in rt.l_oNodes:
+        l_oNodes.append(n)
