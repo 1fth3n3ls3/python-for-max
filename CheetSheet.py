@@ -208,3 +208,15 @@ MaxPlus.SelectionManager.SelectNodes(newSelection)
       # Generate python list from nodes
       for n in rt.l_oNodes:
         l_oNodes.append(n)
+
+# Importar librerias de python externas
+
+import sys
+sys.path.append("F:/FBX/2016.1/lib/Python27_x64/")
+
+import FbxCommon
+
+
+# Get Node by Name
+
+the_node = MaxPlus.INode.GetINodeByName("Point001")
