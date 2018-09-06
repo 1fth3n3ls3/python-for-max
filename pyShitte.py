@@ -1,4 +1,5 @@
 import MaxPlus
+import pysideuic
 from PySide import QtGui, QtCore
 
 
@@ -33,19 +34,6 @@ class Window(QtGui.QWidget):
         super(Window, self).__init__()
         self.setGeometry(15, 35, 500, 300)
         self.setWindowTitle("My Window")
-
-        # self.setWindowIcon(QtGui.QIcon(''))
-
-        # extractAction = QtGui.QAction("&GET TO THE CHOPPAH!!!", self)
-        # extractAction.setShortcut("Ctrl+Q")
-        # extractAction.setStatusTip('Leave The App')
-
-        # # self.statusBar()
-
-        # mainMenu = self.menuBar()
-        # fileMenu = mainMenu.addMenu('&File')
-        # fileMenu.addAction(extractAction)
-
         self.home()
 
     def home(self):
@@ -82,10 +70,7 @@ class Window(QtGui.QWidget):
 
         # comboBox.activated[str].connect(self.style_choice)
 
-        self.show()
-
-
-
+        self.show()    
 
     def download(self):
         self.completed = 0
@@ -112,7 +97,6 @@ class Window(QtGui.QWidget):
         choice = QtGui.QMessageBox.question(self, 'Extract!',
                                             "Get into the chopper?",
                                             QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-
         if choice == QtGui.QMessageBox.Yes:
             print("Extracting Naaaaaaoooww!!!!")
         # sys.exit()
@@ -126,10 +110,11 @@ def main():
         app = QtGui.QApplication([])
 
     window = Window()
+    # QtGui.QWidget(MaxPlus.GetQMaxWindow(window))
+    # MaxPlus.GetQMaxWindow()
     # MaxPlus.AttachQWidgetToMax(window) # 2016
-    window.setParent(MaxPlus.GetQMaxWindow()) # by default the QWidget is modeless #2017
-    # _GCProtector.widgets.append(window)
-
+    # window.setParent(MaxPlus.GetQMaxWindow()) # by default the QWidget is modeless #2017
+    _GCProtector.widgets.append(window)
 
 if __name__ == '__main__':
     main()
