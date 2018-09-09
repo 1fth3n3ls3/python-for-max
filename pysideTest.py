@@ -22,7 +22,7 @@ def main():
 	label = QtGui.QLabel("Click button to create a cylinder in the scene")
 	main_layout.addWidget(label)
 
-	cylinder_btn = QtGui.QPushButton("Cylinder")
+	cylinder_btn = QtGui.QPushButton("Cylinder") # llamamos a funciones 
 	main_layout.addWidget(cylinder_btn)
 	w.setLayout(main_layout)
 
