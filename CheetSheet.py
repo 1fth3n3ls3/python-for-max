@@ -220,3 +220,16 @@ import FbxCommon
 # Get Node by Name
 
 the_node = MaxPlus.INode.GetINodeByName("Point001")
+
+
+# The way matrix works in maxplus
+
+the_node = MaxPlus.INode.GetINodeByName("Point001")
+
+tm = the_node.GetWorldTM()
+inverse_tm = MaxPlus.Matrix3(*tm)
+
+print tm
+print inverse_tm
+inverse_tm.Invert()
+print inverse_tm
