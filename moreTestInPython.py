@@ -88,7 +88,7 @@ def GetAnimationRanges():
 
 # 	return tm_info
 
-def AnimateTransformComp(nodes, tm_list, offset = 0):
+def AnimateTransformDecompose(nodes, tm_list, offset = 0):
 	'''Moves the node around to demonstrate animation'''
 	# select the node so we will see the keyframes in the timeslider
 	ticks_per_frame = 160
@@ -132,7 +132,7 @@ def AnimateTransform(nodes, tm_list, offset = 0):
 	# Turn off the AutoKey button
 	anim.SetAnimateButtonState(False)
 
-def AnimateTransformCompensation(nodes, tm_list, offset = 0, matrix=MaxPlus.Matrix3.GetIdentity()):
+def AnimateTransformCompensation(nodes, tm_list, offset = 0):
 	'''Moves the node around to demonstrate animation'''
 	# select the node so we will see the keyframes in the timeslider
 
@@ -145,12 +145,20 @@ def AnimateTransformCompensation(nodes, tm_list, offset = 0, matrix=MaxPlus.Matr
 		# anim.SetTime((frame * ticks_per_frame) + offset, False) 
 		t = ((frame + offset)* ticks_per_frame) 
  		for i in xrange(0, len(nodes)):
- 			# print i
- 			parent_tm = nodes[i].GetParent().GetWorldTM()
- 			parent_tm.Invert()
-			# nodes[i].SetWorldTM(tm_list[frame - offset][i] * parent_tm, int(t))
-			nodes[i].SetWorldTM(tm_list[frame - offset][i], int(t))
+ 			if i > 0:
+ 				name = (nodes[i].GetName())
 
+ 				# if name.find("Hand") == -1:
+				p = nodes[i].GetWorldPosition(t)
+
+				tm_from_file = tm_list[frame - offset][i]
+
+				new_tm = PreservePosition(p, tm_from_file)
+
+				nodes[i].SetWorldTM(new_tm, t)
+
+			else:
+				nodes[i].SetWorldTM(tm_list[frame - offset][i], int(t))
 
 	# Turn off the AutoKey button
 	anim.SetAnimateButtonState(False)	
@@ -180,16 +188,35 @@ def GetTransformAnim(nodes):
 	return range_list	
 
 
-def getTransformLocal(node, parent=None):
-	if (not parent):
-		parent = node.GetParent()
-
+def getTransformLocal(node, ref=None):
 	tm = node.GetWorldTM()
-	parent_tm = parent.GetWorldTM()
-	inversed_tm = MaxPlus.Matrix3(*parent_tm)
-	local_tm = tm * inversed_tm
+	if not ref:
+		parent = node.GetParent()
+		if parent:
+			parent_tm = parent.GetWorldTM()
+			inversed_tm = inverseMatrix(parent_tm)# MaxPlus.Matrix3(*parent_tm)
+			local_tm = tm * inversed_tm
+			return local_tm			
+		else:
+			return tm
+	else:
+		parent_tm = ref.GetWorldTM()
+		inversed_tm = inverseMatrix(parent_tm)# MaxPlus.Matrix3(*parent_tm)
+		local_tm = tm * inversed_tm
+		return local_tm
 
-	return local_tm
+
+def inverseMatrix(matrix):
+	# return the inverse matrix
+	tm = MaxPlus.Matrix3(*matrix)
+	tm.Invert()
+	return tm
+
+
+def PreservePosition(pos, matrix):
+	tm = MaxPlus.Matrix3(*matrix)
+	tm.SetTranslation(pos)
+	return tm  
 
 def getHierarchy(node):
 	hierarchy = []
@@ -306,7 +333,7 @@ MaxPlus.Core.EvalMAXScript("clearListener()")
 # MaxPlus.Core.EvalMAXScript("enableSceneRedraw()")
 MaxPlus.Core.EvalMAXScript("max create mode")
 
-MaxPlus.Core.EvalMAXScript("disableSceneRedraw()")
+# MaxPlus.Core.EvalMAXScript("disableSceneRedraw()")
 # MaxPlus.Core.EvalMAXScript("timeSlider.setVisible false")
 # MaxPlus.Core.EvalMAXScript("trackbar.visible = false")
 
@@ -332,11 +359,13 @@ bip2_tm = bip002.GetWorldTM()
 
 bip2_tm.Invert()
 
-AnimateTransformCompensation(hierarchy_bip2, the_tm, offset=0, matrix=(bip2_tm))
+AnimateTransformCompensation(hierarchy_bip2, the_tm, offset=10)
+# AnimateTransform(hierarchy_bip2, the_tm, offset=10)
+
 
 # MaxPlus.Core.EvalMAXScript("timeSlider.setVisible true")
 # MaxPlus.Core.EvalMAXScript("trackbar.visible = true")
-MaxPlus.Core.EvalMAXScript("enableSceneRedraw()")
+# MaxPlus.Core.EvalMAXScript("enableSceneRedraw()")
 
 # TODO: ver si se puede ser consistente descomponiendo el pegado en posicion y rotacion
 
