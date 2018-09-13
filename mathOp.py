@@ -14,5 +14,16 @@ import MaxPlus
 # c = MaxPlus.Point3()
 # c.Set(x, y, z)
 # print c
+MaxPlus.Core.EvalMAXScript("clearlistener()")
 
-test = MaxPlus.Core.EvalMAXScript("2+2")
+o = MaxPlus.INode.GetINodeByName("Sphere001")
+
+test = MaxPlus.Core.EvalMAXScript("print %s" % o[1])
+
+# x = test.Get()
+# print dir(x)
+# print x.GetNumRefs()
+# print x.GetName()
+
+# print x
+

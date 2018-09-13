@@ -222,7 +222,7 @@ import FbxCommon
 the_node = MaxPlus.INode.GetINodeByName("Point001")
 
 
-# The way matrix works in maxplus
+# Invert matrix method for Matrix3 class
 
 the_node = MaxPlus.INode.GetINodeByName("Point001")
 
@@ -233,3 +233,91 @@ print tm
 print inverse_tm
 inverse_tm.Invert()
 print inverse_tm
+
+# Change max modes hack though maxscript
+
+MaxPlus.Core.EvalMAXScript("max create mode")
+
+
+# Disable / Enable some redraws and viewports stuff
+
+MaxPlus.Core.EvalMAXScript("timeSlider.setVisible true")
+MaxPlus.Core.EvalMAXScript("trackbar.visible = true")
+MaxPlus.Core.EvalMAXScript("enableSceneRedraw()")
+
+MaxPlus.Core.EvalMAXScript("disableSceneRedraw()")
+MaxPlus.Core.EvalMAXScript("timeSlider.setVisible false")
+MaxPlus.Core.EvalMAXScript("trackbar.visible = false")
+
+# Get access to data returned by maxcript, applied to rootscene
+
+test = MaxPlus.Core.EvalMAXScript("rootscene.expArtistProps.objsNames")
+x = test.Get()
+print x
+
+#########################
+# Back and for with pymxs
+#########################
+
+
+import pymxs
+import MaxPlus
+MaxPlus.Core.EvalMAXScript("clearlistener()")
+#Create a global using MaxScript
+x = MaxPlus.Core.EvalMAXScript('test1 = sphere()')
+
+test1 = x.Get()
+print test1
+#Print and modify using Python
+rt = pymxs.runtime
+print rt.test
+rt.test1.radius = 100
+
+print test1.GetName()
+
+#Print using MaxScript
+MaxPlus.Core.EvalMAXScript(" print test1.name")
+
+# Create Bones  with MaxPlus
+def createBone (start, end, width = 2.0, height = 2.0):
+	if not (type(start) == type(end) == mp.Point3):
+		return None
+	dirVec = end - start
+	if not (dirVec.Normalize()%mp.Point3(0,0,1) == 1.0) or (dirVec.Normalize()%mp.Point3(0,0,1) == -1.0):
+		upVec = mp.Point3(0,0,1)
+	else:
+		upVec = mp.Point3(0,1,0)
+	
+	frontVec = dirVec.Normalize()
+	sideVec = (upVec^frontVec).Normalize()
+	upVec = (frontVec^sideVec).Normalize()
+	tm = mp.Matrix3(frontVec , sideVec , upVec , start)
+	obj = mp.Factory.CreateGeomObject(MaxPlus.ClassIds.BoneGeometry)
+	obj.ParameterBlock.Length.Value = dirVec.GetLength()
+       	obj.ParameterBlock.Width.Value = width
+	obj.ParameterBlock.Height.Value = height
+	node = mp.Factory.CreateNode(obj)
+	node.SetWorldTM(tm)
+	return node
+def createBoneChain (posList, width = 4.0, height = 4.0, index = 0, parent=mp.Core.GetRootNode()):
+	'''
+	posList is a list of Point3 positions of the bones you want to create,
+	!!! INCLUDING !!! the end position of the end bone.
+	'''
+	bn = createBone(posList[index], posList[index+1], width, height)
+	bn.SetParent(parent)
+	if index < len(posList) - 2:
+		createBoneChain(posList, width, height, index + 1, bn)
+
+
+# How to get node transform monitor target from a maxscript
+
+x = MaxPlus.Core.EvalMAXScript("$'%s'.nodeRefs[1].node" % the_node.GetName()) 
+# new sintaxis
+name =  the_node.GetName()
+x = MaxPlus.Core.EvalMAXScript("$'{}'.nodeRefs[1].node".format(name)) 
+
+
+y = x.Get()
+
+print y.GetName()		

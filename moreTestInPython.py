@@ -2,22 +2,6 @@ import MaxPlus
 import copy # module to make copys and deep copies
 import math
 
-# triObjectID = MaxPlus.Class_ID(0x0009, 0)
-
-# def getMeshFromNode(node, time):
-#        obj = node.EvalWorldState(time).Getobj()
-#        if (obj.CanConvertToType(triObjectID)):
-#               return MaxPlus.TriObject._CastFrom(obj.ConvertToType(triObjectID, time)).GetMesh()
-#        else:
-#               return None
-
-# def getNodeVerts(node, time):
-#        tm = node.GetObjTMAfterWSM(time)
-#        mesh = getMeshFromNode(node, time)
-#        return [tm.PointTransform(mesh.GetVertex(v)) for v in xrange(0, mesh.GetNumVertices())]
-
-# getNodeVerts(MaxPlus.SelectionManager.Nodes.next()  , MaxPlus.Animation.GetTime())
-
 def PrintInterval(interval):
 	'''This function prints an Interval instance nicely with identifiable values. i.e. 'Interval [0,100]'
 	It prints the values in terms of frames, instead of ticks.
@@ -25,69 +9,31 @@ def PrintInterval(interval):
 	are not passed as the number of frames, but instead the frames multiplied by ticks (i.e. 160)'''
 	start = interval.Start() / 160
 	end = interval.End() / 160
-	# print "Current Animation Range: [%d,%d]" % (start, end)
+	print "Current Animation Range: [%d,%d]" % (start, end)
 
-def SetAnimationRanges():
+
+def SetAnimationRanges(start_frame=0, end_frame=100):
 	'''Changes the animation range from the default of 100 frames to 200 frames'''
 	anim = MaxPlus.Animation
 	PrintInterval(anim.GetAnimRange())
 	# Intervals come in units of ticks. Each frame is 160 ticks.
-	newFrames = 200 * 160
-	newRange = MaxPlus.Interval(0, newFrames)
-	anim.SetRange(newRange)
-	# The animation slider now shows 200 frames
-	PrintInterval(anim.GetAnimRange())
+	ticks_per_frame = 160
+	start_tick = start_frame * ticks_per_frame
+	end_tick = end_frame * ticks_per_frame
+	anim_range = MaxPlus.Interval(start_tick, end_tick)
+	anim.SetRange(anim_range)
+	# PrintInterval(anim_range)
+
 
 def GetAnimationRanges():
-	'''Changes the animation range from the default of 100 frames to 200 frames'''
+	'''Get the animation range'''
 	anim = MaxPlus.Animation
 	anim_range = anim.GetAnimRange()
 	ticks_per_frame = 160
-	PrintInterval(anim_range)
-	# # Intervals come in units of ticks. Each frame is 160 ticks.
-	# newFrames = 200 * 160
-	# newRange = MaxPlus.Interval(0, newFrames)
-	# anim.SetRange(newRange)
-	# # The animation slider now shows 200 frames
-	# PrintInterval(anim.GetAnimRange())
-	return anim_range.Start() / ticks_per_frame, anim_range.End() / ticks_per_frame
+	# PrintInterval(anim_range)
 
-# def AnimateTransform(node, tm_list, offset = 0):
-# 	'''Moves the node around to demonstrate animation'''
-# 	# select the node so we will see the keyframes in the timeslider
-# 	ticks_per_frame = 160
-# 	# node.Select()
-# 	anim = MaxPlus.Animation
-# 	# Turn on the AutoKey button
-# 	anim.SetAnimateButtonState(True)
+	return (anim_range.Start() / ticks_per_frame), (anim_range.End() / ticks_per_frame)
 
-	
-
-# 	for frame in xrange(offset, len(tm_list) + offset):
-# 		anim.SetTime((frame * ticks_per_frame) + offset, False) 
-# 		# print frame 
-# 		node.SetWorldTM(tm_list[frame - offset])
-
-# 	# Turn off the AutoKey button
-# 	anim.SetAnimateButtonState(False)
-
-# def GetTransformAnim(node):
-# 	'''Moves the node around to demonstrate animation'''
-# 	# select the node so we will see the keyframes in the timeslider
-# 	ticks_per_frame = 160
-# 	# node.Select()
-# 	anim = MaxPlus.Animation
-
-# 	start, end = GetAnimationRanges()
-
-# 	tm_info = []
-
-# 	for frame in xrange(start, end):
-# 		anim.SetTime(frame * ticks_per_frame, False)
-# 		# print frame 
-# 		tm_info.append(node.GetWorldTM()) 
-
-# 	return tm_info
 
 def AnimateTransformDecompose(nodes, tm_list, offset = 0):
 	'''Moves the node around to demonstrate animation'''
@@ -105,11 +51,8 @@ def AnimateTransformDecompose(nodes, tm_list, offset = 0):
  			t = (tm_list[frame - offset][i]).GetTranslation()
  			r = (tm_list[frame - offset][i]).GetRotation()
 
-
 			nodes[i].SetWorldPosition(t)
 			nodes[i].SetWorldRotation(r)
-
-
 
 	# Turn off the AutoKey button
 	anim.SetAnimateButtonState(False)
@@ -128,7 +71,6 @@ def AnimateTransform(nodes, tm_list, offset = 0):
  		for i in xrange(0, len(nodes)):
  			# print i
 			nodes[i].SetWorldTM(tm_list[frame - offset][i], int(t))
-
 
 	# Turn off the AutoKey button
 	anim.SetAnimateButtonState(False)
@@ -159,7 +101,7 @@ def AnimateTransformCompensation(nodes, tm_list, offset=0, stride=1.0): # la tm_
 				nodes[i].SetWorldTM(new_tm, t)
 				
 			else:
-				# new_tm = applyOffset(-original_pos, applyOffset(initial_pos, tm_list[frame - offset][i]))
+				# new_tm = applyOffset(-original_pos, ApplyOffset(initial_pos, tm_list[frame - offset][i]))
 				new_tm = tm_list[frame - offset][i]
 
 
@@ -198,7 +140,6 @@ def GetTransformAnim(nodes, start=None, end=None):
 			node_list.append(each.GetWorldTM(t)) 
 		range_list.append(node_list) 
 
-
 	return range_list	
 
 
@@ -232,13 +173,14 @@ def PreservePosition(pos, matrix):
 	tm.SetTranslation(pos)
 	return tm  
 
-def applyOffset(new_pos, matrix):
+
+def ApplyOffset(new_pos, matrix):
 	tm = MaxPlus.Matrix3(*matrix)
 	pos = tm.GetTranslation()
 	tm.SetTranslation(pos-new_pos)
 	return tm 	
 
-def getHierarchy(node):
+def GetHierarchy(node):
 	hierarchy = []
 	hierarchy.append(node)
 	# print dir(node)
@@ -305,7 +247,9 @@ MaxPlus.Core.EvalMAXScript("clearListener()")
 # TODO: keep initial pose of target biped
 # TODO: work idea about different namespace for mapping
 # TODO: biped class
-
+# TODO: triangle formula to try to keep contacts in feets. Algorithm based on leg longs. Ver hoja cuadernillo, posible algoritmo.
+# TODO: try c++ faster solution
+# TODO check undos 
 
 # local_transform = getTransformLocal(the_node)
 
@@ -319,52 +263,24 @@ MaxPlus.Core.EvalMAXScript("clearListener()")
 # get hierarchy
 ##################
 
-# TODO check undos 
+
 
 ###################################
 # test copy animation with offset
 ###################################
 
-# MaxPlus.Core.EvalMAXScript("disableSceneRedraw()")
-# MaxPlus.Core.EvalMAXScript("timeSlider.setVisible false")
-# MaxPlus.Core.EvalMAXScript("trackbar.visible = false")
 
-# bip001 = MaxPlus.INode.GetINodeByName("Bip001")
-
-# hierarchy_bip1 = getHierarchy(bip001)
-
-# bip002 = MaxPlus.INode.GetINodeByName("Bip002")
-
-# hierarchy_bip2 = getHierarchy(bip002)
-
-# the_tms = []
-# for each in hierarchy_bip1:
-# 	the_tm = GetTransformAnim(each) # esto da de resultado toda la animacion de ese nodo en el rango
-# 	the_tms.append(the_tm) # lo anyado a una lista donde cada indice sera el listado de matrices de transformacion
-
-
-
-# for i in xrange(0, len(hierarchy_bip2)): # para cada nodo de la jerarquia de destino
-# 	AnimateTransform(hierarchy_bip2[i], the_tms[i], offset=5)
-
-
-# TODO transform the matrixes with the matrix or offset of target parent.
-
-# MaxPlus.Core.EvalMAXScript("timeSlider.setVisible true")
-# MaxPlus.Core.EvalMAXScript("trackbar.visible = true")
-# MaxPlus.Core.EvalMAXScript("enableSceneRedraw()")
 MaxPlus.Core.EvalMAXScript("max create mode")
 
-# MaxPlus.Core.EvalMAXScript("disableSceneRedraw()")
-# MaxPlus.Core.EvalMAXScript("timeSlider.setVisible false")
-# MaxPlus.Core.EvalMAXScript("trackbar.visible = false")
 
 
 bip001 = MaxPlus.INode.GetINodeByName("Bip001")
-hierarchy_bip1 = getHierarchy(bip001)
+hierarchy_bip1 = GetHierarchy(bip001)
 
 bip002 = MaxPlus.INode.GetINodeByName("Bip002")
-hierarchy_bip2 = getHierarchy(bip002)
+hierarchy_bip2 = GetHierarchy(bip002)
+
+
 
 # the_tm = GetTransformAnim(hierarchy_bip1, start=1137, end=1497)
 the_tm = GetTransformAnim(hierarchy_bip1)
@@ -392,7 +308,7 @@ bip2_tm = bip002.GetWorldTM()
 
 bip2_tm.Invert()
 
-AnimateTransformCompensation(hierarchy_bip2, the_tm, offset=0, stride=sp)
+# AnimateTransformCompensation(hierarchy_bip2, the_tm, offset=0, stride=sp)
 # AnimateTransformCompensation(hierarchy_bip2, the_tm, offset=0)
 
 # AnimateTransform(hierarchy_bip2, the_tm, offset=0)
