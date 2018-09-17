@@ -96,29 +96,56 @@ def GetHierarchyTree(ids_list, node_list):
 
 MaxPlus.Core.EvalMAXScript("clearlistener()")
 
-selected_nodes = MaxPlus.SelectionManager.Nodes
+selected_nodes = MaxPlus.SelectionManager.GetNodes()
 
-ids_list =  CreateIdList(selected_nodes)
-		
+ids_list =  CreateIdList(selected_nodes)		
 
 trees =  GetHierarchyTree(ids_list, selected_nodes)
 
-
-for tree in trees:
-	children = False
-	# print each['id']
-	if 'children' in  tree.keys():
-		children = True
-		# while children:
-		for branch in tree['children']:
-			print branch
-			if 'children' in  branch.keys():
-				branch = branch['children']
-
-				print 'llego ' + str(branch)
-			else:
-				children = False
-				print 'llego1'
+stack = []
 
 
 
+def traverse_depth_first(function):
+	stack.extend(trees)
+	while len(stack) > 0:
+		node = stack.pop()
+		function(node['id'])
+		print (selected_nodes[node['id']].GetName())
+		if node.get('children'):
+			childrens = node['children']
+			stack.extend(childrens)
+
+def test(node):
+	print node
+
+# traverse_depth_first(test)
+
+class Tree:
+	def __init__(self, nodes):
+		self.nodes = nodes
+
+	def traverse_breadth_first(self, function):
+		stack.extend(self.nodes)
+		while len(stack) > 0:
+			node = stack.pop(0)
+			function(node['id'])
+			print (selected_nodes[node['id']].GetName())
+			if node.get('children'):
+				childrens = node['children']
+				stack.extend(childrens)
+
+	def traverse_depth_first(self, function):
+		stack.extend(self.nodes)
+		while len(stack) > 0:
+			node = stack.pop()
+			function(node['id'])
+			print (selected_nodes[node['id']].GetName())
+			if node.get('children'):
+				childrens = node['children']
+				stack.extend(childrens)
+
+t = Tree(trees)
+
+t.traverse_breadth_first(test)
+t.traverse_depth_first(test)
