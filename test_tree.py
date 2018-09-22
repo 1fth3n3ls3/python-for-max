@@ -15,5 +15,5 @@ class TestCalc(unittest.TestCase): # inherits from this  class
 												MaxPlus.Point3(0, 0, 1), 
 												MaxPlus.Point3(1, 0, 0)))
 
-if __name__ == '__main__':
-	unittest.main()
+if __name__ == '__main__': # if the file is executed, not imported, execute the command under the condition.
+	unittest.main() # this command allow the tests runs simply executing the file from command or from here
