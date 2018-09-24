@@ -7,6 +7,8 @@ from PySide.QtCore import *
 from PySide.QtGui import *
 import pysideuic
 
+import FbxFile.py
+
 def LoadUiType(uiFile):
 	# LoadUiType only accept ascii encoding chars
 	uiFile = str(uiFile)
@@ -73,25 +75,9 @@ class AnimLibraryWidget(btype, formt):
 		index = self.treeView.currentIndex()
 		file_path = self.model.filePath(index)
 		print file_path
+		return file_path
 
 	# TODO: cargar animacion y aplicar a lo seleccionado la información requerida.
 
-	# def create_cylinder(self):
-	#     obj = MaxPlus.Factory.CreateGeomObject(MaxPlus.ClassIds.Cylinder)
-	#     obj.ParameterBlock.Radius.Value = 10.0
-	#     obj.ParameterBlock.Height.Value = 30.0
-	#     node = MaxPlus.Factory.CreateNode(obj)
-	#     time = MaxPlus.Core.GetCurrentTime()
-	#     MaxPlus.ViewportManager.RedrawViews(time)
-	#     self.__object = obj
-
-	# def change_height(self):
-	# 	self.__object.ParameterBlock.Height.Value = self.dial.value() ** 2
-	# 	print self.dial.value()
-	# 	time = MaxPlus.Core.GetCurrentTime()
-	#     MaxPlus.ViewportManager.RedrawViews(time)
-
-
-
-form = AnimLibraryWidget()
-form.show()
+al_ui = AnimLibraryWidget()
+al_ui.show()
