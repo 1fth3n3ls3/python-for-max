@@ -24,97 +24,97 @@ from PySide import QtGui, QtCore
 #     main()
 
 class _GCProtector(object):
-    # protege la ventana de ser cerrada por el garbage collector
-    widgets = []
+	# protege la ventana de ser cerrada por el garbage collector
+	widgets = []
 
 class Window(QtGui.QWidget):
-    """docstring for Window"""
+	"""docstring for Window"""
 
-    def __init__(self):
-        super(Window, self).__init__()
-        self.setGeometry(15, 35, 500, 300)
-        self.setWindowTitle("My Window")
-        self.home()
+	def __init__(self):
+		super(Window, self).__init__()
+		self.setGeometry(15, 35, 500, 300)
+		self.setWindowTitle("My Window")
+		self.home()
 
-    def home(self):
-        btn = QtGui.QPushButton("cylinder", self)
-        # btn.clicked.connect(QtCore.QCoreApplication.instance().quit)
-        btn.clicked.connect(self.close_application)
-        # btn.resize(100,100)
-        btn.resize(btn.minimumSizeHint())
-        btn.move(0, 0)
+	def home(self):
+		btn = QtGui.QPushButton("cylinder", self)
+		# btn.clicked.connect(QtCore.QCoreApplication.instance().quit)
+		btn.clicked.connect(self.close_application)
+		# btn.resize(100,100)
+		btn.resize(btn.minimumSizeHint())
+		btn.move(0, 0)
 
-        checkBox = QtGui.QCheckBox('Enlarge Window', self)
-        checkBox.move(100, 25)
-        checkBox.stateChanged.connect(self.enlarge_window)
-        # depending on what you want the default to be.
-        # checkBox.toggle()
+		checkBox = QtGui.QCheckBox('Enlarge Window', self)
+		checkBox.move(100, 25)
+		checkBox.stateChanged.connect(self.enlarge_window)
+		# depending on what you want the default to be.
+		# checkBox.toggle()
 
-        self.progress = QtGui.QProgressBar(self)
-        self.progress.setGeometry(200, 80, 250, 20)
+		self.progress = QtGui.QProgressBar(self)
+		self.progress.setGeometry(200, 80, 250, 20)
 
-        self.btn = QtGui.QPushButton('Download', self)
-        self.btn.move(200, 120)
-        self.btn.clicked.connect(self.download)
+		self.btn = QtGui.QPushButton('Download', self)
+		self.btn.move(200, 120)
+		self.btn.clicked.connect(self.download)
 
 
-        comboBox = QtGui.QComboBox(self)
-        comboBox.addItem("motif")
-        comboBox.addItem("Windows")
-        comboBox.addItem("cde")
-        comboBox.addItem("Plastique")
-        comboBox.addItem("Cleanlooks")
-        comboBox.addItem("windowsvista")
-        comboBox.move(50, 250)
-        
+		comboBox = QtGui.QComboBox(self)
+		comboBox.addItem("motif")
+		comboBox.addItem("Windows")
+		comboBox.addItem("cde")
+		comboBox.addItem("Plastique")
+		comboBox.addItem("Cleanlooks")
+		comboBox.addItem("windowsvista")
+		comboBox.move(50, 250)
+		
 
-        # comboBox.activated[str].connect(self.style_choice)
+		# comboBox.activated[str].connect(self.style_choice)
 
-        self.show()    
+		self.show()    
 
-    def download(self):
-        self.completed = 0
+	def download(self):
+		self.completed = 0
 
-        while self.completed < 100:
-            self.completed += 0.00001
-            self.progress.setValue(self.completed)    
+		while self.completed < 100:
+			self.completed += 0.00001
+			self.progress.setValue(self.completed)    
 
-    def enlarge_window(self, state):
-        if state == QtCore.Qt.Checked:
-            self.setGeometry(50, 50, 1000, 600)
-        else:
-            self.setGeometry(50, 50, 500, 300)
+	def enlarge_window(self, state):
+		if state == QtCore.Qt.Checked:
+			self.setGeometry(50, 50, 1000, 600)
+		else:
+			self.setGeometry(50, 50, 500, 300)
 
-    def make_cylinder(self):
-        obj = MaxPlus.Factory.CreateGeomObject(MaxPlus.ClassIds.Cylinder)
-        obj.ParameterBlock.Radius.Value = 10.0
-        obj.ParameterBlock.Height.Value = 30.0
-        node = MaxPlus.Factory.CreateNode(obj)
-        time = MaxPlus.Core.GetCurrentTime()
-        MaxPlus.ViewportManager.RedrawViews(time)
+	def make_cylinder(self):
+		obj = MaxPlus.Factory.CreateGeomObject(MaxPlus.ClassIds.Cylinder)
+		obj.ParameterBlock.Radius.Value = 10.0
+		obj.ParameterBlock.Height.Value = 30.0
+		node = MaxPlus.Factory.CreateNode(obj)
+		time = MaxPlus.Core.GetCurrentTime()
+		MaxPlus.ViewportManager.RedrawViews(time)
 
-    def close_application(self):
-        choice = QtGui.QMessageBox.question(self, 'Extract!',
-                                            "Get into the chopper?",
-                                            QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-        if choice == QtGui.QMessageBox.Yes:
-            print("Extracting Naaaaaaoooww!!!!")
-        # sys.exit()
-        else:
-            pass
+	def close_application(self):
+		choice = QtGui.QMessageBox.question(self, 'Extract!',
+											"Get into the chopper?",
+											QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+		if choice == QtGui.QMessageBox.Yes:
+			print("Extracting Naaaaaaoooww!!!!")
+		# sys.exit()
+		else:
+			pass
 
 
 def main():
-    app = QtGui.QApplication.instance()
-    if not app:
-        app = QtGui.QApplication([])
+	app = QtGui.QApplication.instance()
+	if not app:
+		app = QtGui.QApplication([])
 
-    window = Window()
-    # QtGui.QWidget(MaxPlus.GetQMaxWindow(window))
-    # MaxPlus.GetQMaxWindow()
-    # MaxPlus.AttachQWidgetToMax(window) # 2016
-    # window.setParent(MaxPlus.GetQMaxWindow()) # by default the QWidget is modeless #2017
-    _GCProtector.widgets.append(window)
+	window = Window()
+	# QtGui.QWidget(MaxPlus.GetQMaxWindow(window))
+	# MaxPlus.GetQMaxWindow()
+	# MaxPlus.AttachQWidgetToMax(window) # 2016
+	# window.setParent(MaxPlus.GetQMaxWindow()) # by default the QWidget is modeless #2017
+	_GCProtector.widgets.append(window)
 
 if __name__ == '__main__':
-    main()
+	main()
